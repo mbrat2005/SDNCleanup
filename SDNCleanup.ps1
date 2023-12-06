@@ -99,7 +99,9 @@ $allVMNames | ForEach-Object {
 }
 
 # clean up registry on host nodes
+Write-Host "Clean up registry on host nodes..."
 ForEach ($node in $nodeNames) {
+Write-Host "Cleaning up registry on '$node'"
     Invoke-Command {
         If (Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\NcHostAgent\Parameters\' -Name Connections -ErrorAction SilentlyContinue) {
             Remove-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Services\NcHostAgent\Parameters\' -Name Connections -Force -WhatIf:($args[0])
