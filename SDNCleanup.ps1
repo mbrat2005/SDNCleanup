@@ -94,7 +94,7 @@ ForEach ($group in $groupedVMs) {
 Write-Host "Deleteing AD computer accounts..."
 $allVMNames | ForEach-Object {
     If (Get-AdComputer -Filter "name -eq '$_'") {
-        Remove-AdComputer -Identity $_ -Confirm:$false -WhatIf:($whatIf.IsPresent)
+        Get-AdComputer -Identity $_ | Remove-AdObject -Recursive -Confirm:$false -WhatIf:($whatIf.IsPresent)
     }
 }
 
