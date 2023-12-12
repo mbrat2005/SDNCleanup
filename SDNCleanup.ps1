@@ -5,6 +5,11 @@ param (
     [string]
     $ConfigurationDataFile,
 
+    # uninstall newtork virtualization feature on host nodes (requires reboot)
+    [Parameter(Mandatory=$false)]
+    [switch]
+    $RemoveNetworkVirtualizationAndRebootNodes,
+
     # use -WhatIf to see what would happen if you ran this script
     [Parameter(Mandatory=$false)]
     [switch]
@@ -108,3 +113,27 @@ Write-Host "Cleaning up registry on '$node'"
         }
     } -ComputerName $node -ArgumentList $whatIf.IsPresent
 }
+
+# uninstall NetworkVirtualization feature on each node
+if ($RemoveNetworkVirtualizationAndRebootNodes.isPresent) {
+    Write-Host "Uninstalling the NetworkVirtualization feature on nodes..."
+    ForEach ($node in $nodeNames) {
+    Write-Host "Cleaning up registry on '$node'"
+        Invoke-Command {
+            If ((Get-WindowsFeature NetworkVirtualization).Installed) {
+                Remove-WindowsFeature NetworkVirtualization -Confirm:$false -WhatIf:($args[0])
+            }
+        } -ComputerName $node -ArgumentList $whatIf.IsPresent
+    }
+
+    Write-Host "Restarting nodes"
+    If ((Invoke-Command {Get-Cluster} -ComputerName $nodeNames[0]) {
+        Write-Host "Stopping cluster...
+        Invoke-Command {
+            Stop-Cluster -Confirm:$false -Wait -WhatIf:($args[0])
+        } -ComputerName $nodeNames[0] -ArgumentList $whatIf.IsPresent
+    }
+
+    Restart-Computer -ComputerName $nodeNames -Force -WhatIf:$whatIf.IsPresent
+}
+
