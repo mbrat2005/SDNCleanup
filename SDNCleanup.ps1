@@ -18,9 +18,9 @@ param (
 
 $configdata = [hashtable] (Invoke-Expression (Get-Content $ConfigurationDataFile | out-string))
 
-$networkControllerNames = $configdata.NCs.computerName
-$gatewayNames = $configdata.Gateways.ComputerName
-$muxNames = $configData.Muxes.computerName
+$networkControllerNames = ($configdata.NCs).ComputerName
+$gatewayNames = ($configdata.Gateways).ComputerName
+$muxNames = ($configData.Muxes).ComputerName
 $allVMNames = $networkControllerNames + $gatewayNames + $muxNames
 
 Write-Host "Found '$($allVMNames.count)' VMs in config file to clean up"
