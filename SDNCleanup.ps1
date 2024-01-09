@@ -127,7 +127,7 @@ if ($RemoveNetworkVirtualizationAndRebootNodes.isPresent) {
     }
 
     Write-Host "Restarting nodes"
-    If ((Invoke-Command {Get-Cluster} -ComputerName $nodeNames[0]) {
+    If (Invoke-Command {Get-Cluster} -ComputerName $nodeNames[0]) {
         Write-Host "Stopping cluster...
         Invoke-Command {
             Stop-Cluster -Confirm:$false -Wait -WhatIf:($args[0])
