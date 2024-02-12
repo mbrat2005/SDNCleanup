@@ -21,6 +21,8 @@ param (
     $Force
 )
 
+$ErrorActionPreference = 'Stop'
+
 $configdata = [hashtable] (Invoke-Expression (Get-Content $ConfigurationDataFile | out-string))
 
 $networkControllerNames = ($configdata.NCs).ComputerName
